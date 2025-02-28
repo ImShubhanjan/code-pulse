@@ -16,10 +16,11 @@ namespace CodePulse.API.Controllers
     public class CategoriesController : ControllerBase
     {
         private readonly ICategoryRepository categoryRepository;
-
-        public CategoriesController(ICategoryRepository categoryRepository)
+        private readonly ILogger<CategoriesController> _logger;
+        public CategoriesController(ILogger<CategoriesController> logger, ICategoryRepository categoryRepository)
         {
             this.categoryRepository = categoryRepository;
+            this._logger = logger;
         }
 
         [HttpPost]
@@ -31,11 +32,11 @@ namespace CodePulse.API.Controllers
                 Name = request.Name,
                 UrlHandle = request.UrlHandle,
             };
-            
+
             //Now repo is doing all the Database operation, controller doesn't have the 
             //implementation of the database operation
             await categoryRepository.CreateAsync(category);
-            
+
             //After the request has been processed to database 
             //then the response will be send to the frontend to display on UI
             //Map domain to DTO
@@ -53,6 +54,7 @@ namespace CodePulse.API.Controllers
         public async Task<IActionResult> GetAllCategories()
         {
             var categories = await categoryRepository.GetAllAsync();
+            _logger.Log(LogLevel.Information, "Info - " + categories);
             //Map domain model to DTO
             var response = new List<CategoryDTO>();
             foreach (var category in categories)
@@ -64,6 +66,69 @@ namespace CodePulse.API.Controllers
                     UrlHandle = category.UrlHandle
                 });
             }
+            return Ok(response);
+        }
+
+        [HttpGet]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> GetCategoryById([FromRoute] Guid id)
+        {
+
+            var existingCategory = await categoryRepository.GetById(id);
+            if (existingCategory == null)
+            {
+                return NotFound();
+            }
+            var response = new CategoryDTO
+            {
+                Id = existingCategory.Id,
+                Name = existingCategory.Name,
+                UrlHandle = existingCategory.UrlHandle,
+            };
+            return Ok(response);
+        }
+        [HttpPut]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> UpdateCategory([FromRoute] Guid id, UpdateCategoryDTO request)
+        {
+            var category = new Category
+            {
+                Id = id,
+                Name = request.Name,
+                UrlHandle = request.UrlHandle,
+            };
+
+            category = await categoryRepository.UpdateAsync(category);
+            
+            //Mapping the Domain model to the DTO
+            if(category == null)
+            {
+                return NotFound();
+            }
+            var response = new CategoryDTO
+            {
+                Id = category.Id,
+                Name = category.Name,
+                UrlHandle = category.UrlHandle
+            };
+            return Ok(response);
+        }
+        [HttpDelete]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> DeleteCategory([FromRoute] Guid id)
+        {
+            var category = await categoryRepository.DeleteAsync(id);
+
+            if(category == null)
+            {
+                return NotFound();
+            }
+            var response = new CategoryDTO
+            {
+                Id = category.Id,
+                Name = category.Name,
+                UrlHandle = category.UrlHandle
+            };
             return Ok(response);
         }
     }

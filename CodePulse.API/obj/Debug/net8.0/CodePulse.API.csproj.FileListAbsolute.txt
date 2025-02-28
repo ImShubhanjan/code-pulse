@@ -170,3 +170,4 @@ C:\Users\Riya Dutta\source\repos\CodePulse.API\CodePulse.API\obj\Debug\net8.0\re
 C:\Users\Riya Dutta\source\repos\CodePulse.API\CodePulse.API\obj\Debug\net8.0\CodePulse.API.pdb
 C:\Users\Riya Dutta\source\repos\CodePulse.API\CodePulse.API\obj\Debug\net8.0\CodePulse.API.genruntimeconfig.cache
 C:\Users\Riya Dutta\source\repos\CodePulse.API\CodePulse.API\obj\Debug\net8.0\ref\CodePulse.API.dll
+C:\Users\Riya Dutta\source\repos\CodePulse.API\CodePulse.API\obj\Debug\net8.0\CodePulse.API.sourcelink.json
